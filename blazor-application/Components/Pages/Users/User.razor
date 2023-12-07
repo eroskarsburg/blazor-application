@@ -1,0 +1,57 @@
+﻿@page "/users"
+
+@{
+    UserObject user = new UserObject();
+}
+
+<PageTitle>Users</PageTitle>
+
+<h1>User</h1>
+
+<div>
+    <input id="username" placeholder="Username" value="@user.Username">
+    <input id="user-password" placeholder="Password" value="@user.Password">
+    <input id="user-confirm-password" placeholder="Confirm Password" value="@user.ConfirmPassword">
+    <select id="user-access-level">
+        <option value="@user.AccessLevel = 1">Manager</option>
+        <option value="@user.AccessLevel = 2">Supervisor</option>
+        <option value="@user.AccessLevel = 3">User</option>
+    </select>
+    <button id="submit-user" onclick="@CallJavaScriptFunction(user)">Submit</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    function callCSharpMethod() {
+        debugger;
+        var method = DotNet.invokeMethodAsync('blazor-application', 'CallJavaScriptFunction');
+        alert(method);
+    }
+</script>
+
+@code {
+    public class UserObject
+    {
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+        public string? ConfirmPassword { get; set; }
+        public AccessLevel AccessLevel { get; set; }
+    }
+
+    public string CallJavaScriptFunction(UserObject user)
+    {
+        bool incorrectFields = string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password) ||
+            string.IsNullOrEmpty(user.ConfirmPassword) || string.IsNullOrEmpty(user.AccessLevel.ToString());
+
+        if (incorrectFields) { return "Fields Incomplete"; }
+
+        return "All right!";
+    }
+
+    public enum AccessLevel
+    {
+        Administrator = 1,
+        Supervisor = 2,
+        User = 3
+    }
+}
